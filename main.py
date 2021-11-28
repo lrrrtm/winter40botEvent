@@ -6,7 +6,6 @@ import cv2
 import sqlite3
 import openpyxl
 import xlsxwriter
-import zipfile
 import time
 from constants import *
 from buttons import *
@@ -24,7 +23,7 @@ temporaryDict = {}
 
 def resizePicture(current):
     image_path = current
-    fixed_width = 500
+    fixed_width = 200
     img = Image.open(image_path)
     width_percent = (fixed_width / float(img.size[0]))
     height_size = int((float(img.size[0]) * float(width_percent)))
@@ -114,8 +113,6 @@ def sendHello(message):
                 "Твоя заявка уже добавлена",
                 reply_markup=markup)
     else:
-        cur.execute(f"insert into {queueTable} (tID) VALUES (\"{tID}\")")
-        db.commit()
         bot.send_message(tID, highLimitText)
 
 
@@ -135,6 +132,7 @@ def callback(call):
                 bot.send_message(call.message.chat.id, infoText)
             elif call.data == "btn_3":
                 try:
+                    bot.delete_message(call.message.chat.id, call.message.message_id)
                     temporaryDict[call.message.chat.id][2] = "10"
                     markup = types.InlineKeyboardMarkup(row_width=3)
                     markup.add(
@@ -148,9 +146,10 @@ def callback(call):
                         "Выбери букву класса",
                         reply_markup=markup)
                 except BaseException:
-                    bot.send_message(call.message.chat.id, errorMessage)
+                    bot.send_message(call.message.chat.id, errorMessage + "1")
             elif call.data == "btn_4":
                 try:
+                    bot.delete_message(call.message.chat.id, call.message.message_id)
                     temporaryDict[call.message.chat.id][2] = "11"
                     markup = types.InlineKeyboardMarkup(row_width=3)
                     markup.add(
@@ -165,45 +164,53 @@ def callback(call):
                         "Выбери букву класса",
                         reply_markup=markup)
                 except BaseException:
-                    bot.send_message(call.message.chat.id, errorMessage)
+                    bot.send_message(call.message.chat.id, errorMessage  + "2")
 
             elif call.data == "btn_5":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "А"
                 checkInfo(call.message)
             elif call.data == "btn_6":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "Г"
                 checkInfo(call.message)
             elif call.data == "btn_7":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "И"
                 checkInfo(call.message)
             elif call.data == "btn_8":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "К"
                 checkInfo(call.message)
             elif call.data == "btn_9":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "Л"
                 checkInfo(call.message)
             elif call.data == "btn_10":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "М"
                 checkInfo(call.message)
             elif call.data == "btn_11":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "В"
                 checkInfo(call.message)
             elif call.data == "btn_12":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "С"
                 checkInfo(call.message)
             elif call.data == "btn_13":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "П"
                 checkInfo(call.message)
             elif call.data == "btn_14":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 temporaryDict[call.message.chat.id][3] = "Е"
                 checkInfo(call.message)
             elif call.data == "btn_15":
                 if temporaryDict[call.message.chat.id][0] != "" and temporaryDict[call.message.chat.id][1] != "":
-                    bot.send_message(
-                        call.message.chat.id,
-                        f"Отлично, {temporaryDict[call.message.chat.id][0]}, "
-                        "регистрация почти закончена")
+                    bot.delete_message(call.message.chat.id, call.message.message_id)
                     bot.send_message(call.message.chat.id, sendPhotoText)
+                    time.sleep(1)
                     bot.send_message(
                         call.message.chat.id,
                         "Пример хорошей фотографии:")
@@ -214,6 +221,7 @@ def callback(call):
 
             elif call.data == "btn_16":
                 if temporaryDict[call.message.chat.id][0] != '':
+                    bot.delete_message(call.message.chat.id, call.message.message_id)
                     markup = types.InlineKeyboardMarkup(row_width=2)
                     markup.add(button_17, button_18)
                     bot.send_message(
@@ -221,17 +229,22 @@ def callback(call):
                         "Какую информацию ты хочешь исправить?",
                         reply_markup=markup)
                 else:
-                    bot.send_message(call.message.chat.id, errorMessage)
+                    bot.send_message(call.message.chat.id, errorMessage +  + "3")
             elif call.data == "btn_17":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 msg = bot.send_message(
                     call.message.chat.id,
                     "Введи имя и фамилию по новой"
                     "\nНапиши в формате Иван Иванов")
                 bot.register_next_step_handler(msg, inputNameAgain)
             elif call.data == "btn_18":
-                bot.send_message(
+                bot.delete_message(call.message.chat.id, call.message.message_id)
+                markup = types.InlineKeyboardMarkup(row_width=2)
+                markup.add(button_3, button_4)
+                msg = bot.send_message(
                     call.message.chat.id,
-                    "Выбери другой класс с помощью кнопок выше")
+                    "В каком классе ты учишься?",
+                    reply_markup=markup)
             elif call.data == "btn_19":
                 tID = call.message.chat.id
                 cur.execute(
@@ -302,6 +315,7 @@ def callback(call):
                     reply_markup=markup)
 
             elif call.data == "btn_23":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 msg = bot.send_message(call.message.chat.id, nameText)
                 bot.register_next_step_handler(msg, inputName)
 
@@ -310,7 +324,7 @@ def callback(call):
                     f"select * from {mainTable} where tID = \"{call.message.chat.id}\"")
                 data = cur.fetchall()
                 if len(data) == 0:
-                    bot.send_message(call.message.chat.id, errorMessage)
+                    bot.send_message(call.message.chat.id, errorMessage +  + "4")
                 else:
                     tID = call.message.chat.id
                     cur.execute(
@@ -324,13 +338,10 @@ def callback(call):
         except Exception as e:
             bot.send_message(
                 call.message.chat.id,
-                errorMessage)
+                errorMessage + "5")
 
 
 def check_face(tID):
-    # 0 - не найдено лиц
-    # 1 - найдено одно лицо
-    # 2 - найдено больше 1 лица
     face_cascade_db = cv2.CascadeClassifier(
         cv2.data.haarcascades +
         "haarcascade_frontalface_default.xml")
@@ -372,7 +383,7 @@ def recieve_photo(message):
         resizePicture(src)
 
     except Exception as e:
-        msg = bot.send_message(tID, errorMessage)
+        msg = bot.send_message(tID, errorMessage + "\nОтравь свою фотографию")
         bot.register_next_step_handler(msg, recieve_photo)
 
 
@@ -393,12 +404,13 @@ def inputNameAgain(message):
                 message.text.split(" ")[0].title().replace("ё", "е").replace("Ё", "Е"), \
                 message.text.split(" ")[1].title().replace("ё", "е").replace("Ё", "Е")
             msg = bot.send_message(message.chat.id, "Имя и фамилия исправлены")
-            final(message)
+            time.sleep(1)
+            checkInfo(message)
         else:
-            msg = bot.send_message(message.chat.id, errorMessage)
+            msg = bot.send_message(message.chat.id, errorMessage + "7")
             bot.register_next_step_handler(msg, inputNameAgain)
     except BaseException:
-        bot.send_message(message.chat.id, errorMessage)
+        bot.send_message(message.chat.id, errorMessage + "8")
 
 
 def inputName(message):
@@ -411,13 +423,12 @@ def inputName(message):
         temporaryDict[tID][1] = lastname.replace("ё", "е").replace("Ё", "Е")
         markup = types.InlineKeyboardMarkup(row_width=2)
         markup.add(button_3, button_4)
-        bot.send_message(tID, f"Приятно познакомиться, {firstname}")
         msg = bot.send_message(
             tID,
             "В каком классе ты учишься?",
             reply_markup=markup)
     else:
-        msg = bot.send_message(message.chat.id, errorMessage)
+        msg = bot.send_message(message.chat.id, errorMessage + "\nТакого учащегося нет в школе")
         bot.register_next_step_handler(msg, inputName)
 
 
@@ -427,17 +438,15 @@ def checkInfo(message):
     lastname = temporaryDict[tID][1]
     grade = temporaryDict[tID][2] + temporaryDict[tID][3]
     teacher = teachers[grade]
-    bot.send_message(
-        message.chat.id,
-        "Давай проверим всю информацию перед тем, как её отправить")
     markup = types.InlineKeyboardMarkup(row_width=1)
     markup.add(button_15, button_16)
     bot.send_message(
         message.chat.id,
-        f"Имя и фамилия: {firstname} {lastname}"
-        f"\nКласс: {grade}"
-        f"\nКлассный руководитель: {teacher}",
-        reply_markup=markup)
+        f"Проверим информацию"
+        f"\nИмя и фамилия: *{firstname} {lastname}*"
+        f"\nКласс: *{grade}*"
+        f"\nКлассный руководитель: *{teacher}*", parse_mode="Markdown")
+    bot.send_message(message.chat.id, "Проверь правильность и выбери нужную кнопку", reply_markup = markup)
 
 
 def sendData(message):
@@ -462,7 +471,7 @@ def sendQuestion(message):
         bot.send_message(adminID, f"Вопрос от {tID}:"
                          f"\n{message.text}")
     except BaseException:
-        bot.send_message(tID, errorMessage)
+        bot.send_message(tID, errorMessage + "10")
 
 
 @bot.message_handler(commands=["status"])
@@ -471,7 +480,7 @@ def getStatus(message):
     cur.execute(f"select * from {mainTable} where tID = \"{tID}\"")
     data = cur.fetchall()
     if data == "()":
-        bot.send_message(tID, errorMessage)
+        bot.send_message(tID, errorMessage + "11")
     else:
 
         firstname = data[0][1]
@@ -526,7 +535,7 @@ def adminCommands(message):
                     reply_markup=markup)
                 bot.send_message(tID, "Статус участника изменён")
             except BaseException:
-                bot.reply_to(tID, errorMessage)
+                bot.reply_to(tID, errorMessage + "12")
         elif re.match('/r', message.text) and len(message.text.split()) > 2:
             bot.send_message(
                 message.text.split()[1],
@@ -547,7 +556,7 @@ def adminCommands(message):
                             f"\n{' '.join(message.text.split()[1:])}", parse_mode="Markdown")
                 bot.send_message(tID, "сообщние отправлено")
             except Exception as e:
-                bot.send_message(tID, errorMessage + f"\nОшибка: {e}")
+                bot.send_message(tID, errorMessage + f"\nОшибка: {e}" + "13")
         elif re.match('/h', message.text):
             bot.send_message(tID, helpText)
 
@@ -666,7 +675,7 @@ def upload(message):
                     reply_markup=markup)
                 i += 1
         except BaseException:
-            bot.send_message(message.chat.id, errorMessage)
+            bot.send_message(message.chat.id, errorMessage + "14")
 
 
 @bot.message_handler(content_types=['photo'])
@@ -716,7 +725,7 @@ def checkReg(message):
                     message.chat.id,
                     f"Билета с ID {data} не существует")
         except Exception as e:
-            bot.send_message(adminID, errorMessage + f"\nОшибка: {e}")
+            bot.send_message(adminID, errorMessage + f"\nОшибка: {e}" + "15")
 
 
-bot.infinity_polling()
+bot.polling(non_stop=True)

@@ -20,7 +20,7 @@ button_13 = types.InlineKeyboardButton("П", callback_data="btn_13")
 button_14 = types.InlineKeyboardButton("Е", callback_data="btn_14")
 
 button_15 = types.InlineKeyboardButton(
-    "✅ Всё верно! ✅", callback_data="btn_15")
+    "✅ Всё верно ✅", callback_data="btn_15")
 button_16 = types.InlineKeyboardButton(
     "❌ Хочу исправить ❌", callback_data="btn_16")
 
