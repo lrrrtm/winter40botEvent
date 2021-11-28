@@ -337,10 +337,10 @@ def callback(call):
                     bot.send_message(tID, removeText, reply_markup=markup)
 
             elif call.data == "btn_25":
+                markup = types.InlineKeyboardMarkup(row_width=1)
+                markup.add(button_21)
                 bot.delete_message(call.message.chat.id, call.message.message_id)
-                bot.send_message(call.message.chat.id, "Действие отменено")
-                time.sleep(2)
-                getStatus(call.message)
+                bot.send_message(call.message.chat.id, "Действие отменено", reply_markup=markup)
 
 
         except Exception as e:
