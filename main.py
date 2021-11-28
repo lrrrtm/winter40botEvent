@@ -23,7 +23,7 @@ temporaryDict = {}
 
 def resizePicture(current):
     image_path = current
-    fixed_width = 200
+    fixed_width = 300
     img = Image.open(image_path)
     width_percent = (fixed_width / float(img.size[0]))
     height_size = int((float(img.size[0]) * float(width_percent)))
@@ -146,7 +146,7 @@ def callback(call):
                         "Выбери букву класса",
                         reply_markup=markup)
                 except BaseException:
-                    bot.send_message(call.message.chat.id, errorMessage + "1")
+                    bot.send_message(call.message.chat.id, errorMessage)
             elif call.data == "btn_4":
                 try:
                     bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -229,7 +229,7 @@ def callback(call):
                         "Какую информацию ты хочешь исправить?",
                         reply_markup=markup)
                 else:
-                    bot.send_message(call.message.chat.id, errorMessage +  + "3")
+                    bot.send_message(call.message.chat.id, errorMessage)
             elif call.data == "btn_17":
                 bot.delete_message(call.message.chat.id, call.message.message_id)
                 msg = bot.send_message(
@@ -308,7 +308,7 @@ def callback(call):
                 getStatus(call.message)
             elif call.data == "btn_22":
                 markup = types.InlineKeyboardMarkup(row_width=1)
-                markup.add(button_22_1)
+                markup.add(button_22_2, button_22_1)
                 bot.send_message(
                     call.message.chat.id,
                     "Ты точно хочешь удалить свою заявку?",
@@ -324,7 +324,7 @@ def callback(call):
                     f"select * from {mainTable} where tID = \"{call.message.chat.id}\"")
                 data = cur.fetchall()
                 if len(data) == 0:
-                    bot.send_message(call.message.chat.id, errorMessage +  + "4")
+                    bot.send_message(call.message.chat.id, errorMessage)
                 else:
                     tID = call.message.chat.id
                     cur.execute(
@@ -334,11 +334,17 @@ def callback(call):
                     markup.add(button_1)
                     bot.send_message(tID, removeText, reply_markup=markup)
 
+            elif call.data == "btn_25":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
+                bot.send_message(call.message.chat.id, "Действие отменено")
+                time.sleep(2)
+                getStatus(call.message)
+
 
         except Exception as e:
             bot.send_message(
                 call.message.chat.id,
-                errorMessage + "5")
+                errorMessage)
 
 
 def check_face(tID):
@@ -368,7 +374,7 @@ def recieve_photo(message):
         isFaceOnPhoto = check_face(tID)
         if isFaceOnPhoto == 1:
             markup = types.InlineKeyboardMarkup(row_width=1)
-            markup.add(button_22)
+            markup.add(button_21, button_22)
             bot.send_message(tID, endRegistrationText, reply_markup=markup)
 
             sendData(message)
@@ -407,10 +413,10 @@ def inputNameAgain(message):
             time.sleep(1)
             checkInfo(message)
         else:
-            msg = bot.send_message(message.chat.id, errorMessage + "7")
+            msg = bot.send_message(message.chat.id, errorMessage)
             bot.register_next_step_handler(msg, inputNameAgain)
     except BaseException:
-        bot.send_message(message.chat.id, errorMessage + "8")
+        bot.send_message(message.chat.id, errorMessage)
 
 
 def inputName(message):
@@ -471,7 +477,7 @@ def sendQuestion(message):
         bot.send_message(adminID, f"Вопрос от {tID}:"
                          f"\n{message.text}")
     except BaseException:
-        bot.send_message(tID, errorMessage + "10")
+        bot.send_message(tID, errorMessage)
 
 
 @bot.message_handler(commands=["status"])
@@ -479,44 +485,45 @@ def getStatus(message):
     tID = message.chat.id
     cur.execute(f"select * from {mainTable} where tID = \"{tID}\"")
     data = cur.fetchall()
-    if data == "()":
-        bot.send_message(tID, errorMessage + "11")
-    else:
+    try:
+        if data == "()":
+            bot.send_message(tID, errorMessage)
+        else:
 
-        firstname = data[0][1]
-        status = data[0][6]
-        print(f"{status} {tID}")
-        if status == statuses[1]:
-            bot.send_message(
-                tID,
-                f"{firstname}, текущий статус твоей заявки: *{status}*",
-                parse_mode="Markdown")
-            bot.send_message(
-                tID, "Нужно ещё немного времени, чтобы обработать твою заявку")
-        elif status == statuses[2]:
-            bot.send_message(
-                tID,
-                f"{firstname}, текущий статус твоей заявки: *{status}*",
-                parse_mode="Markdown")
-            markup = types.InlineKeyboardMarkup(row_width=1)
-            markup.add(button_20)
-            bot.send_message(
-                tID,
-                "К сожалению, ты не сможешь попасть на зимний бал."
-                "\nЕсли ты считаешь, что произошла ошибка, обратись в поддержку",
-                reply_markup=markup)
+            firstname = data[0][1]
+            status = data[0][6]
+            if status == statuses[1]:
+                bot.send_message(
+                    tID,
+                    f"{firstname}, текущий статус твоей заявки: *{status}*",
+                    parse_mode="Markdown")
+                bot.send_message(
+                    tID, "Нужно ещё немного времени, чтобы обработать твою заявку")
+            elif status == statuses[2]:
+                bot.send_message(
+                    tID,
+                    f"{firstname}, текущий статус твоей заявки: *{status}*",
+                    parse_mode="Markdown")
+                markup = types.InlineKeyboardMarkup(row_width=1)
+                markup.add(button_20)
+                bot.send_message(
+                    tID,
+                    "К сожалению, ты не сможешь попасть на зимний бал."
+                    "\nЕсли ты считаешь, что произошла ошибка, обратись в поддержку",
+                    reply_markup=markup)
 
-        elif status == statuses[0]:
-            bot.send_message(
-                tID,
-                f"{firstname}, текущий статус твоей заявки: *{status}*",
-                parse_mode="Markdown")
-            markup = types.InlineKeyboardMarkup(row_width=1)
-            markup.add(button_22, button_19)
-            bot.send_message(
-                tID, f"Ура, теперь нас станет на 1 больше! Ждём тебя *{partyData}*."
-                "\nДо встречи!", reply_markup=markup, parse_mode="Markdown")
-
+            elif status == statuses[0]:
+                bot.send_message(
+                    tID,
+                    f"{firstname}, текущий статус твоей заявки: *{status}*",
+                    parse_mode="Markdown")
+                markup = types.InlineKeyboardMarkup(row_width=1)
+                markup.add(button_22, button_19)
+                bot.send_message(
+                    tID, f"Ура, теперь нас станет на 1 больше! Ждём тебя *{partyData}*."
+                    "\nДо встречи!", reply_markup=markup, parse_mode="Markdown")
+    except Exception:
+        bot.send_message(tID, errorMessage)
 
 @bot.message_handler(content_types=['text'])
 def adminCommands(message):
@@ -535,7 +542,7 @@ def adminCommands(message):
                     reply_markup=markup)
                 bot.send_message(tID, "Статус участника изменён")
             except BaseException:
-                bot.reply_to(tID, errorMessage + "12")
+                bot.reply_to(tID, errorMessage)
         elif re.match('/r', message.text) and len(message.text.split()) > 2:
             bot.send_message(
                 message.text.split()[1],
@@ -675,7 +682,7 @@ def upload(message):
                     reply_markup=markup)
                 i += 1
         except BaseException:
-            bot.send_message(message.chat.id, errorMessage + "14")
+            bot.send_message(message.chat.id, errorMessage)
 
 
 @bot.message_handler(content_types=['photo'])

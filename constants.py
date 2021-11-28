@@ -10,15 +10,13 @@ path_userCheck = 'D:/winter40bot/data/check/'
 path_xlsList = 'D:/winter40bot/data/xls/'
 previewSource = 'D:/winter40bot/data/preview_photo.jpg'
 ticketSource = "D:/winter40bot/data/input_ticket.png"
-manualSourse = "D:/winter40bot/data/Инструкция.pdf"
 
 # database
-databaseName = "C:/Users/Lario/Рабочий стол/winter40_event/database.db"
 
+databaseName = "C:/Users/Lario/Рабочий стол/winter40_event/database.db"
 mainTable = "registration"
 queueTable = "queue"
-
-participantsLimit = 1000 # ограничение количества участников
+participantsLimit = 300 # ограничение количества участников
 
 specialCount = 4  # длина кода для гостей
 specialName = "SPECIAL"  # класс для спец гостей
@@ -67,15 +65,11 @@ attentionText = "*ВНИМАНИЕ*\nДля того, чтобы попасть 
                 "\n" \
                 "\nЕсли сообщение не будет отправлено, заявка будет отклонена"
 
-infoText = f"Зимний бал в гимназии №40 состоится {partyData}" \
-           "\nБал разделён на две части:" \
-           "\n1. Концертная часть в ККЗ \"Галактика\"" \
-           "\n2. Танцевальная часть в спортивном зале \"Сатурн\"" \
-           "\nПодробнее о регистрации: https://clck.ru/Z5bRS"
+infoText = "Все подробности тут: https://clck.ru/Z5rB5"
 
 
 nameText = "Как тебя зовут?" \
-           "\nНапиши в формате Иван Иванов"
+           "\nНапиши своё полное имя и фамилию (Иван Иванов)"
 
 sendPhotoText = "Тебе осталсь отправить фотографию, " \
             "чтобы на ней было видно твоё лицо" \

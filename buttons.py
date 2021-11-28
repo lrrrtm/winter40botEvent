@@ -46,5 +46,8 @@ button_22 = types.InlineKeyboardButton(
 button_22_1 = types.InlineKeyboardButton(
     " 🚫 Да, удалить 🚫 ", callback_data="btn_24")
 
+button_22_2 = types.InlineKeyboardButton(
+    "Отмена", callback_data="btn_25")
+
 button_23 = types.InlineKeyboardButton(
     " Понятно, дальше ", callback_data="btn_23")
