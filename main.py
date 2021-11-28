@@ -4,6 +4,7 @@ import re
 import random
 import cv2
 import sqlite3
+import os
 import openpyxl
 import xlsxwriter
 import time
@@ -283,6 +284,8 @@ def callback(call):
                             str(tID) +
                             '.png',
                             'rb'))
+                    os.remove(f"/home/lrrrtmban/data/tickets/{tID}.png")
+                    os.remove(f"/home/lrrrtmban/data/qrc/qrcode{tID}.png")
                 else:
                     markup = types.InlineKeyboardMarkup(row_width=1)
                     markup.add(button_20)
