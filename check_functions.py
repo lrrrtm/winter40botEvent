@@ -6,7 +6,6 @@ cur = db.cursor()
 
 
 def checkInputName(current):
-    print(123456789)
     try:
 
         firstname, lastname = current.split(" ")[0], current.split(" ")[1]
@@ -14,7 +13,6 @@ def checkInputName(current):
         lastname = lastname.replace("ё", "е").replace("Ё", "Е")
         cur.execute(f"select * from school where firstname = \"{firstname}\" and lastname = \"{lastname}\"")
         data = cur.fetchall()
-        print(data, firstname, lastname)
         if len(current.split(" ")) == 2 and len(current.split(" ")[0]) < 20 and  len(current.split(" ")[1]) < 20 and len(data) == 1:
             return True
     except Exception as e:
