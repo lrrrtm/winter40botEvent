@@ -44,50 +44,52 @@ def createTable(grade):
     cur.execute(
         f"select tID, firstname, lastname, status, photo from {mainTable} where status = \"обрабатывается\" "
         f"and grade = \"{grade}\"")
+
     data = cur.fetchall()
-    wb = xlsxwriter.Workbook(path_xlsList + grade + ".xlsx")
-    ws = wb.add_worksheet()
+    if len(data) > 0:
+        wb = xlsxwriter.Workbook(path_xlsList + grade + ".xlsx")
+        ws = wb.add_worksheet()
 
-    format = wb.add_format()
-    format.set_align('vcenter')
-    format.set_align('center')
+        format = wb.add_format()
+        format.set_align('vcenter')
+        format.set_align('center')
 
-    ws.set_column("A2:A5", 20, format)
-    ws.set_column("B2:B5", 20, format)
-    ws.set_column("C2:C5", 20, format)
-    ws.set_column("D2:D5", 20, format)
-    ws.set_column("E2:E5", 25, format)
-    ws.set_default_row(165)
+        ws.set_column("A2:A5", 20, format)
+        ws.set_column("B2:B5", 20, format)
+        ws.set_column("C2:C5", 20, format)
+        ws.set_column("D2:D5", 20, format)
+        ws.set_column("E2:E5", 25, format)
+        ws.set_default_row(165)
 
-    names = ['ID', "ИМЯ", "ФАМИЛИЯ", "СТАТУС", "ФОТО"]
-    title_col = 0
-    for i in names:
-        ws.write(0, title_col, i)
-        title_col += 1
+        names = ['ID', "ИМЯ", "ФАМИЛИЯ", "СТАТУС", "ФОТО"]
+        title_col = 0
+        for i in names:
+            ws.write(0, title_col, i)
+            title_col += 1
 
-    photos = []
-    row = 1
-    for human in range(len(data)):
-        col = 0
-        photos.append(data[human][4])
-        for a in range(len(data[human]) - 1):
-            ws.write(row, col, data[human][a])
-            col += 1
-        row += 1
+        photos = []
+        row = 1
+        for human in range(len(data)):
+            col = 0
+            photos.append(data[human][4])
+            for a in range(len(data[human]) - 1):
+                ws.write(row, col, data[human][a])
+                col += 1
+            row += 1
 
-    img_row = 1
-    img_col = 4
-    for image in photos:
-        ws.insert_image(img_row,
-                        img_col,
-                        image,
-                        {'x_scale': 0.5,
-                         'y_scale': 0.5,
-                         'x_offset': 5,
-                         'y_offset': 5,
-                         'positioning': 1})
-        img_row += 1
-    wb.close()
+        img_row = 1
+        img_col = 4
+        for image in photos:
+            ws.insert_image(img_row,
+                            img_col,
+                            image,
+                            {'x_scale': 0.5,
+                             'y_scale': 0.5,
+                             'x_offset': 5,
+                             'y_offset': 5,
+                             'positioning': 1})
+            img_row += 1
+        wb.close()
 
 
 @bot.message_handler(commands=['start'])
@@ -107,7 +109,7 @@ def sendHello(message):
                 reply_markup=markup)
         else:
             markup = types.InlineKeyboardMarkup(row_width=1)
-            markup.add(button_21)
+            markup.add(button_21, button_22)
             bot.send_message(
                 tID,
                 "Твоя заявка уже добавлена",
@@ -121,7 +123,6 @@ def callback(call):
     if call.message:
         try:
             if call.data == "btn_1":
-                bot.delete_message(call.message.chat.id, call.message.message_id)
                 markup = types.InlineKeyboardMarkup(row_width=1)
                 markup.add(button_23)
                 bot.send_message(
@@ -247,6 +248,7 @@ def callback(call):
                     "В каком классе ты учишься?",
                     reply_markup=markup)
             elif call.data == "btn_19":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 tID = call.message.chat.id
                 cur.execute(
                     f"select * from {mainTable} where tID = \"{call.message.chat.id}\"")
@@ -261,7 +263,7 @@ def callback(call):
                         font_size = 95
                     else:
                         font_size = 120
-                    font = ImageFont.truetype("bent.ttf", size=font_size)
+                    font = ImageFont.truetype("/home/lrrrtmban/Bent.ttf", size=font_size)
                     idraw.text((2000, 490), firstname, font=font)
                     idraw.text((2000, 610), lastname, font=font)
                     idraw.text((2000, 800), grade, font=font)
@@ -308,7 +310,6 @@ def callback(call):
             elif call.data == "btn_21":
                 getStatus(call.message)
             elif call.data == "btn_22":
-                bot.delete_message(call.message.chat.id, call.message.message_id)
                 markup = types.InlineKeyboardMarkup(row_width=1)
                 markup.add(button_22_2, button_22_1)
                 bot.send_message(
@@ -322,6 +323,7 @@ def callback(call):
                 bot.register_next_step_handler(msg, inputName)
 
             elif call.data == "btn_24":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 cur.execute(
                     f"select * from {mainTable} where tID = \"{call.message.chat.id}\"")
                 data = cur.fetchall()
@@ -337,16 +339,18 @@ def callback(call):
                     bot.send_message(tID, removeText, reply_markup=markup)
 
             elif call.data == "btn_25":
-                markup = types.InlineKeyboardMarkup(row_width=1)
-                markup.add(button_21)
                 bot.delete_message(call.message.chat.id, call.message.message_id)
-                bot.send_message(call.message.chat.id, "Действие отменено", reply_markup=markup)
+                bot.send_message(call.message.chat.id, "Действие отменено")
+                time.sleep(2)
+                getStatus(call.message)
+
 
 
         except Exception as e:
             bot.send_message(
                 call.message.chat.id,
                 errorMessage)
+            print(e)
 
 
 def check_face(tID):
@@ -524,8 +528,9 @@ def getStatus(message):
                 bot.send_message(
                     tID, f"Ура, теперь нас станет на 1 больше! Ждём тебя *{partyData}*."
                     "\nДо встречи!", reply_markup=markup, parse_mode="Markdown")
-    except Exception:
+    except Exception as e:
         bot.send_message(tID, errorMessage)
+        print(e)
 
 @bot.message_handler(content_types=['text'])
 def adminCommands(message):
@@ -593,15 +598,62 @@ def adminCommands(message):
                 bot.send_message(tID, "Такого класса нет")
         elif re.match('/allt', message.text):
             for grade in grades:
-                createTable(grade)
+                cur.execute(f"select tID from {mainTable} where grade = \"{grade}\"")
+                data = cur.fetchall()
+                if len(data) > 0:
+                    createTable(grade)
 
-                bot.send_document(
-                    tID,
-                    open(
-                        path_xlsList +
-                        grade +
-                        ".xlsx",
-                        'rb'))
+                    bot.send_document(
+                        tID,
+                        open(
+                            path_xlsList +
+                            grade +
+                            ".xlsx",
+                            'rb'))
+        elif re.match('/stat', message.text):
+            el_p, el_v, el_g, el_m, el_c, el_e, = 0,0,0,0,0,0
+            ten_a, ten_g, ten_i, ten_k, ten_l, = 0,0,0,0,0
+            cur.execute(f"select grade from {mainTable}")
+            data = cur.fetchall()
+            all = len(data)
+            for i in range(len(data)):
+                if data[i][0] == "11П":
+                    el_p += 1
+                elif data[i][0] == "11В":
+                    el_v += 1
+                elif data[i][0] == "11Г":
+                    el_g += 1
+                elif data[i][0] == "11М":
+                    el_m += 1
+                elif data[i][0] == "11С":
+                    el_c += 1
+                elif data[i][0] == "11Е":
+                    el_e += 1
+                elif data[i][0] == "10А":
+                    ten_a += 1
+                elif data[i][0] == "10Г":
+                    ten_g += 1
+                elif data[i][0] == "10И":
+                    ten_i += 1
+                elif data[i][0] == "10К":
+                    ten_k += 1
+                elif data[i][0] == "10Л":
+                    ten_l += 1
+
+            text = "Статистика" \
+                   f"\nВсего - {all}" \
+                   f"\n11П - {el_p}"\
+                   f"\n11В - {el_v}"\
+                   f"\n11Г - {el_g}"\
+                   f"\n11М - {el_m}"\
+                   f"\n11С - {el_c}"\
+                   f"\n11Е - {el_e}"\
+                   f"\n10А - {ten_a}"\
+                   f"\n10Г - {ten_g}"\
+                   f"\n10И - {ten_i}"\
+                   f"\n10К - {ten_k}"\
+                   f"\n10Л - {ten_l}"
+            bot.send_message(tID, text)
 
     else:
         if re.match(
