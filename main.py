@@ -121,6 +121,7 @@ def callback(call):
     if call.message:
         try:
             if call.data == "btn_1":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 markup = types.InlineKeyboardMarkup(row_width=1)
                 markup.add(button_23)
                 bot.send_message(
@@ -307,6 +308,7 @@ def callback(call):
             elif call.data == "btn_21":
                 getStatus(call.message)
             elif call.data == "btn_22":
+                bot.delete_message(call.message.chat.id, call.message.message_id)
                 markup = types.InlineKeyboardMarkup(row_width=1)
                 markup.add(button_22_2, button_22_1)
                 bot.send_message(
