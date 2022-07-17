@@ -1,4 +1,4 @@
-# winter40botEvent
+# winterballbot
 Проект Telegram-бота для регистрации участников на Осенний/Зимний бал в Гимназии №40
 # Авторы
 [Артём Ларионенко](https://github.com/lrrrtm)  
